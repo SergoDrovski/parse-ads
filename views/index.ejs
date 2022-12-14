@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='/css/style.css' />
+    <link rel='stylesheet' href="/css/bootstrap.min.css" />
+    <style>
+      thead th{
+        font-size: 0.9rem !important;
+        line-height: 1 !important;
+        white-space: nowrap;
+      }
+
+    </style>
+  </head>
+  <body>
+    <h1><%= header %></h1>
+
+
+    <div class="container-lg">
+      <div class="vstack gap-3">
+        <div>
+          <button id="check" type="button" class="btn btn-success">Начать проверку</button>
+          <button id="get_stats" type="button" class="btn btn-primary">Остановить проверку</button>
+        </div>
+        <table class="table">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Д. нач.</th>
+            <th scope="col">Д. окон.</th>
+            <th scope="col">Всего сайтов</th>
+            <th scope="col">Провер.</th>
+            <th scope="col">Непровер.</th>
+            <th scope="col">Содержат код</th>
+            <th scope="col">Не содержат</th>
+            <th scope="col">Статус</th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Mark</td>
+              <td>Mark</td>
+              <td>Otto</td>
+              <td>@mdo</td>
+              <td>@mdo</td>
+              <td>@mdo</td>
+              <td>@mdo</td>
+              <td>@mdo</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

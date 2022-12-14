@@ -1,0 +1,75 @@
+{
+  "DB": {
+    "urls_new": [
+      {
+        "url": "https://www.yandex.com/",
+        "date_creat": 1668693561769,
+        "date_complete": null,
+        "task_id": null,
+        "include": null
+      },
+      {
+        "url": "https://www.rambler.com/",
+        "date_creat": 1668693561769,
+        "date_complete": null,
+        "task_id": null,
+        "include": null
+      },
+      {
+        "url": "https://www.wikipedia.org/",
+        "date_creat": 1668693561769,
+        "date_complete": null,
+        "task_id": null,
+        "include": null
+      },
+      {
+        "url": "https://www.similarweb.com/",
+        "date_creat": 1668693561769,
+        "date_complete": null,
+        "task_id": null,
+        "include": null
+      }
+    ],
+    "urls_complete": [
+      {
+        "url": "https://www.google.com/",
+        "date_creat": 1668693561769,
+        "date_complete": 1668370946,
+        "task_id": 1,
+        "include": false
+      }
+    ],
+    "stats": {
+      "all_urls": 50000,
+      "urls_complete": 10000,
+      "all_include": 7000,
+      "all_exclude": 3000
+    },
+    "tasks": [
+      {
+        "date_creat": 1668370946,
+        "date_complete": 1668370946,
+        "status": "completed",
+        "urls_complete": 100,
+        "include": 80,
+        "exclude": 20
+      },
+      {
+        "date": 1668370946,
+        "date_complete": null,
+        "status": "check",
+        "urls_complete": null,
+        "include": null,
+        "exclude": null
+      }
+    ],
+    "users": [
+      {
+        "login": "ascorpick",
+        "pass": "qwert1234",
+        "creat": 1668370946
+      }
+    ]
+  }
+}
+
