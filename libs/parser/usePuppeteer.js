@@ -10,6 +10,8 @@ const isLoadingPage = async (url) => {
 }
 
 const usePuppeteer = async () => {
+
+	// Нужно убивать браузер, после завершения проверки 
 	const browser = await puppeteer.launch({ headless: false })
 
 	const checker = async (array = []) => {
@@ -21,6 +23,7 @@ const usePuppeteer = async () => {
 
 			// если ссылка не загружается
 			// сразу возвращаем obj
+			// Возвращать статус от аксиоса !!!!!!!!!
 			if (!isValidLink) {
 				return resultObj
 			}

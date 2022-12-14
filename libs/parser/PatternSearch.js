@@ -44,6 +44,7 @@ exports.patternSearch = function patternSearch() {
     }
 
     return syncAll([
-        patternLucky
+        patternLucky,
+
     ])
 }
