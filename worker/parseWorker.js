@@ -27,7 +27,7 @@ async function main(idTask) {
     // console.log(idTask)
     //Делим задачу на итерации
     // const countUrl =  await UrlNew.count();
-    let iterate = 2;
+    let iterate = 1;
     let logError = [];
     let statusTask;
 
@@ -81,12 +81,12 @@ async function runPartTask(idTask) {
             throw new Error('Ошибка записи резулт парс')
         });
 
-        //Если всё ок удаляем старые
-        let removeIdsArray = urlDoc.map(function(doc) { return doc._id; });
-        await UrlNew.deleteMany({_id: {$in: removeIdsArray}}).catch(function(error){
-            console.log(error)
-            throw new Error('Ошибка удаления обработанных урлов')
-        });
+        // //Если всё ок удаляем старые
+        // let removeIdsArray = urlDoc.map(function(doc) { return doc._id; });
+        // await UrlNew.deleteMany({_id: {$in: removeIdsArray}}).catch(function(error){
+        //     console.log(error)
+        //     throw new Error('Ошибка удаления обработанных урлов')
+        // });
 
     } catch (err){
         throw err;

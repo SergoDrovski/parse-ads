@@ -55,7 +55,7 @@ exports.startTask = async function(request, response, next){
     await Task.findOne({status: "check"}).then(dbTask => {
         if(dbTask) {
             disconnectDb();
-            response.redirect(`task/${dbTask._id}/`)
+            response.redirect(`/cabinet/task/${dbTask._id}/`)
             return true;
         } else {
             //Создание задачи
@@ -63,26 +63,29 @@ exports.startTask = async function(request, response, next){
                 status: "check",
             });
 
-            //Создание воркера
-            const idWorker = run((data)=>{
-                delete workerState[idWorker]
-                if(data instanceof Error){
-                    if(data.exitCode === 1){
-                        console.log(data)
-                        return false;
-                    }
-                }
-            });
-
             //Сохранение
             newTask.save().then(() => {
+
+                // Если Ок то =>
+                //Создание воркера
+                const idWorker = run((data)=>{
+                    delete workerState[idWorker]
+                    if(data instanceof Error){
+                        if(data.exitCode === 1){
+                            console.log(data)
+                            return false;
+                        }
+                    }
+                });
 
                 //отпавляем задачу воркеру
                 workerState[idWorker].postMessage({ _id: newTask._id.valueOf() });
                 response.json(newTask);
+
             }).catch((err)=>{
                 if (err) return next(err);
             });
+
         }
     });
 };
