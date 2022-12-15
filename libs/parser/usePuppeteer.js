@@ -5,8 +5,12 @@ const { patternSearch } = require("./PatternSearch.js");
 
 const isLoadingPage = async (url) => {
 	return await axios.get(url)
-		.then(res => true)
-		.catch(err => false)
+		.then(res => {
+			return { valid: true, status: res.status }
+		})
+		.catch(err => {
+			return { valid: false, status: err.status }
+		})
 }
 
 const usePuppeteer = async () => {
@@ -16,14 +20,12 @@ const usePuppeteer = async () => {
 
 	const checker = async (array = []) => {
 		const result = await Promise.all(array.map(async item => {
-			const isValidLink = await isLoadingPage(item.url)
+			const { valid: isValidLink, status: axiosStatus } = await isLoadingPage(item.url)
 
-			// свойства объекта по дефолту false
-			const resultObj = { ...item, ads_name: null, ads_exist: false, is_valid_link: false, page_status: null}
+			// свойства объекта
+			const resultObj = { ...item, ads_name: null, ads_exist: false, is_valid_link: isValidLink, page_status: axiosStatus }
 
-			// если ссылка не загружается
-			// сразу возвращаем obj
-			// Возвращать статус от аксиоса !!!!!!!!!
+			// если ссылка не валидна, возвращаем obj
 			if (!isValidLink) {
 				return resultObj
 			}
@@ -34,15 +36,18 @@ const usePuppeteer = async () => {
 			// создаем новую страницу
 			const page = await browser.newPage()
 
-			// открываем ссылку
+			// переходим по ссылке
 			// еще можно проверять на долгий timeout
+			// на счет этого статуса стоит подумать, ведь уже есть isLoadingPage
+			// можно просто await page.goto(item.url, { waitUntil: 'load', timeout: 0 })
 			const status = await page.goto(item.url, { waitUntil: 'load', timeout: 0 })
 			if (status.status() !== 200) {
 				return { ...resultObj, page_status: status.status() }
 			}
 
-			resultObj.is_valid_link = true
-			resultObj.page_status = status.status()
+			// из за isLoadingPage эта логика отпадает
+			// resultObj.is_valid_link = true
+			// resultObj.page_status = status.status()
 
 			// действия на странице открытой ссылки
 			await page.evaluate(async (args) => {
@@ -50,13 +55,13 @@ const usePuppeteer = async () => {
 				// fix lazy load на сайтах
 				// есть вероятность что не все блоки/рекламы успеют загрузиться за 3-6 сек.
 				const footer = document.createElement('div')
-				footer.id = 'triggered'
+				footer.id = 'puppeteerTarget'
 				document.body.append(footer)
 
 				await new Promise(resolve => setTimeout(resolve, 3000))
-				document.querySelector('#triggered').scrollIntoView({ behavior: "smooth" })
+				document.querySelector('#puppeteerTarget').scrollIntoView({ behavior: "smooth" })
 				await new Promise(resolve => setTimeout(resolve, 3000))
-				document.querySelector('#triggered').scrollIntoView({ behavior: "smooth" })
+				document.querySelector('#puppeteerTarget').scrollIntoView({ behavior: "smooth" })
 				await new Promise(resolve => setTimeout(resolve, 3000))
 			})
 
@@ -70,8 +75,10 @@ const usePuppeteer = async () => {
 		return result
 	}
 
+	// убиваем(закрываем) браузер
+	await browser.close()
+
 	return { checker }
 }
-
 
 exports.usePuppeteer = usePuppeteer
