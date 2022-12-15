@@ -11,10 +11,10 @@ const taskScheme = new Schema({
     urls: {
         type: Number
     },
-    include: {
+    ads_exist: {
         type: Number
     },
-    exclude: {
+    ads_not_exist: {
         type: Number
     },
     error: {

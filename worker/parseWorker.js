@@ -51,7 +51,7 @@ async function main(idTask) {
 async function runPartTask(idTask) {
     try {
         //Получаем часть урлов
-        let urlDoc =  await UrlNew.find({}).limit(2);
+        let urlDoc =  await UrlNew.find({}).limit(1);
 
         if(urlDoc.length === 0) {
             throw new Error('отсутсвуют данные в db')
@@ -81,12 +81,12 @@ async function runPartTask(idTask) {
             throw new Error('Ошибка записи резулт парс')
         });
 
-        // //Если всё ок удаляем старые
-        // let removeIdsArray = urlDoc.map(function(doc) { return doc._id; });
-        // await UrlNew.deleteMany({_id: {$in: removeIdsArray}}).catch(function(error){
-        //     console.log(error)
-        //     throw new Error('Ошибка удаления обработанных урлов')
-        // });
+        //Если всё ок удаляем старые
+        let removeIdsArray = urlDoc.map(function(doc) { return doc._id; });
+        await UrlNew.deleteMany({_id: {$in: removeIdsArray}}).catch(function(error){
+            console.log(error)
+            throw new Error('Ошибка удаления обработанных урлов')
+        });
 
     } catch (err){
         throw err;
@@ -97,14 +97,14 @@ async function updateTaskInDb(idTask, status, error){
     const urlCompl = await UrlCompl.find({ task_id: idTask._id });
 
     //колличество содержащих код ссылок
-    const countUrlInclude = urlCompl.filter(elem => elem.include).length;
+    const countUrlAdsExist = urlCompl.filter(elem => elem.ads_exist).length;
 
     const task = {
         completed: Date.now(),
         status: status,
         urls: urlCompl.length,
-        include: countUrlInclude,
-        exclude: urlCompl.length - countUrlInclude,
+        ads_exist: countUrlAdsExist,
+        ads_not_exist: urlCompl.length - countUrlAdsExist,
         error: error
     }
     //частично обновляем задачу

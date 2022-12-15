@@ -76,7 +76,7 @@ const usePuppeteer = async () => {
 	}
 
 	// убиваем(закрываем) браузер
-	await browser.close()
+	// await browser.close()
 
 	return { checker }
 }
