@@ -72,11 +72,13 @@ const usePuppeteer = async () => {
 			return { ...resultObj , ...res}
 		}))
 
+		//убиваем(закрываем) браузер
+		await browser.close()
+
 		return result
 	}
 
-	// убиваем(закрываем) браузер
-	// await browser.close()
+
 
 	return { checker }
 }

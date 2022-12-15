@@ -27,7 +27,7 @@ async function main(idTask) {
     // console.log(idTask)
     //Делим задачу на итерации
     // const countUrl =  await UrlNew.count();
-    let iterate = 1;
+    let iterate = 2;
     let logError = [];
     let statusTask;
 
