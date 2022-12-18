@@ -27,7 +27,7 @@ async function main(idTask) {
     // console.log(idTask)
     //Делим задачу на итерации
     // const countUrl =  await UrlNew.count();
-    let iterate = 2;
+    let iterate = 22;
     let logError = [];
     let statusTask;
 
@@ -51,7 +51,7 @@ async function main(idTask) {
 async function runPartTask(idTask) {
     try {
         //Получаем часть урлов
-        let urlDoc =  await UrlNew.find({}).limit(1);
+        let urlDoc =  await UrlNew.find({}).limit(10);
 
         if(urlDoc.length === 0) {
             throw new Error('отсутсвуют данные в db')
