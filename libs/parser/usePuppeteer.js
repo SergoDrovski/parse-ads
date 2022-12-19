@@ -42,6 +42,7 @@ const usePuppeteer = async () => {
 			// переходим по ссылке
 			// еще можно проверять на долгий timeout
 			// Пробуем открыть сайт, если ошибка возвращаем невалидную ссылку и проверяем след.
+
 			try {
 				const status = await page.goto(item.url, { waitUntil: 'load', timeout: 0 })
 				resultObj.page_status = status.status();
