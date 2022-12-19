@@ -19,6 +19,9 @@ const urlScheme = new Schema({
         type: Boolean,
         required: true
     },
+    pattern_find: {
+        type: Schema.Types.Mixed
+    },
     is_valid_link: {
         type: Boolean,
         required: true
