@@ -45,6 +45,7 @@ async function main(idTask) {
     statusTask = logError.length !== 0 ? "failed" : "completed";
     const errorMess = logError.length !== 0 ? logError.pop().message : "";
 
+    
     return await updateTaskInDb(idTask, statusTask, errorMess);
 }
 

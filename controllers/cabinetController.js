@@ -42,7 +42,12 @@ exports.getUrlInTask = async function(request, response, next){
     const urlsCompl = await UrlCompl.find({ task_id: id });
     await disconnectDb();
 
-    if(urlsCompl) response.json(urlsCompl);
+    if(urlsCompl) {
+        urlsCompl.sort(function(first, second) {
+            return (first.ads_exist === second.ads_exist) ? 0 : first.ads_exist ? -1 : 1;
+        });
+        response.json(urlsCompl);
+    }
     else next(new Error('not found task in db'))
 };
 
