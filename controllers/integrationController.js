@@ -1,20 +1,62 @@
 const { connectDb, disconnectDb } = require('../libs/mongoos.js');
 const UrlNew = require('../models/urlNew.js').model;
-const fs = require('fs')
+const KeySearch = require('../models/keySearch.js').model;
+const axios = require("axios");
+const fs = require('fs');
 const path = require('path');
+const {model: UrlCompl} = require("../models/urlCopleted");
 
+exports.setKeySearch = async function(request, response, next){
+    let error = await connectDb();
+    if(error instanceof Error) next(error)
+
+    const arrayKey = await getKeyInReq(request);
+
+    const arrayModel = arrayKey.map((el)=>{
+        return { key: el }
+    })
+
+    await KeySearch.insertMany(arrayModel).then(function(){
+        disconnectDb();
+        response.status(200);
+        response.json({mess: true});
+    }).catch(function(error){
+        disconnectDb();
+        console.log(error)
+        next(new Error('error save new Key in db'))
+    });
+};
+async function getKeyInReq(request) {
+    return [
+        'без рецепта',
+        'вкусные +и простые рецепты',
+        'вкусные рецепты',
+        'вкусные рецепты +с фото',
+        'говядина рецепты',
+        'домашние рецепты',
+        'домашние рецепты +с фото',
+        'классический рецепт',
+        'печень рецепт',
+        'пошаговый рецепт'
+    ];
+}
 
 exports.getApiUrl = async function(request, response, next){
     let error = await connectDb();
     if(error instanceof Error) next(error)
 
-    const arrayUrl = await ApiYandexTest();
-
-    const arrayModel = arrayUrl.map((el)=>{
-        return { url: el }
+    const key = await KeySearch.find({});
+    const arrayKey = key.map((el)=>{
+        return el.key;
     })
 
-    await UrlNew.insertMany(arrayModel).then(function(){
+    const arrayUrl = await ApiXMLRiver(arrayKey);
+
+    // const arrayModel = arrayUrl.map((el)=>{
+    //     return { url: el }
+    // })
+
+    await UrlNew.insertMany(arrayUrl).then(function(){
         disconnectDb();
         response.status(200);
         response.json({mess: true});
@@ -25,33 +67,17 @@ exports.getApiUrl = async function(request, response, next){
     });
 };
 
-async function ApiYandexTest() {
-    const urlTextFile = fs.readFileSync(path.join(__dirname,'url.txt' )).toString().split("\n");
-    return urlTextFile;
+async function ApiXMLRiver(arrayKey) {
+    let url = '';
+    return await axios.get(url)
+		.then(res => {
+			return { valid: true, status: res.status }
+		})
+		.catch(err => {
+			return { valid: false, status: err.status }
+		})
+
 }
-
-
-// function genStr(len) {
-//     let chrs = 'abdehkmnpswxzABDEFGHKMNPQRSTWXZ123456789';
-//     let str = '';
-//     for (let i = 0; i < len; i++) {
-//         let pos = Math.floor(Math.random() * chrs.length);
-//         str += chrs.substring(pos,pos+1);
-//     }
-//     return str;
-// }
-
 // async function ApiYandexTest() {
-//     const generateArray =  new Array(100)
-//     for (let i=0; i < generateArray.length; i++) {
-//         let domen = genStr(6);
-//         let hash = genStr(12);
-//         generateArray[i] = `https://www.${domen}.com/${hash}/`;
-//     }
-//
-//     return new Promise((resolve, reject) => {
-//         setTimeout(() => {
-//             resolve(generateArray)
-//         }, 3000)
-//     })
+//     return fs.readFileSync(path.join(__dirname,'url.txt' )).toString().split("\n");
 // }
