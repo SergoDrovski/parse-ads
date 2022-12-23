@@ -4,7 +4,6 @@ const KeySearch = require('../models/keySearch.js').model;
 const axios = require("axios");
 const fs = require('fs');
 const path = require('path');
-const {model: UrlCompl} = require("../models/urlCopleted");
 
 exports.setKeySearch = async function(request, response, next){
     let error = await connectDb();
