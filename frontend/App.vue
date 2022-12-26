@@ -1,5 +1,7 @@
 <template>
-	<component v-if="currentLayout" :is="currentLayout + '-layout'"></component>
+	<Transition name="fade" mode="out-in">
+		<component v-if="currentLayout" :is="currentLayout + '-layout'" :key="currentLayout + '-layout'"></component>
+	</Transition>
 </template>
 
 <script>

@@ -1,5 +1,11 @@
 import { createRouter, createWebHashHistory } from "vue-router"
 
+import CabinetStats from '@/views/cabinet/Stats.vue'
+import CabinetTask from '@/views/cabinet/Task.vue'
+import CabinetTaskUrl from '@/views/cabinet/TaskUrl.vue'
+import CabinetTaskStart from '@/views/cabinet/TaskStart.vue'
+import CabinetTaskStop from '@/views/cabinet/TaskStop.vue'
+
 const routes = [{
 		path: '/',
 		name: 'cabinet',
@@ -8,31 +14,32 @@ const routes = [{
 		meta: {
 			auth: true,
 			layout: 'main',
+			title: 'Статистика',
 		},
 		children: [
 			{ 
 				path: '/cabinet/stats', 
-				component: () => import('./views/cabinet/Stats.vue'), 
+				component: CabinetStats,
 				title: 'Статистика'
 			},
 			{ 
 				path: '/cabinet/task/:id', 
-				component: () => import('./views/cabinet/Task.vue'), 
+				component: CabinetTask,
 				title: 'Просмотр задачи'
 			},
 			{ 
 				path: '/cabinet/task/:id/url', 
-				component: () => import('./views/cabinet/TaskUrl.vue'), 
+				component: CabinetTaskUrl,
 				title: 'Ссылки в задаче'
 			},
 			{ 
 				path: '/cabinet/start/task', 
-				component: () => import('./views/cabinet/TaskStart.vue'), 
+				component: CabinetTaskStart,
 				title: 'Запустить новую задачу'
 			},
 			{ 
 				path: '/cabinet/stop/task', 
-				component: () => import('./views/cabinet/TaskStop.vue'), 
+				component: CabinetTaskStop,
 				title: 'Остановить задачу'
 			},
 		]
@@ -69,6 +76,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 	console.log('to', to);
 	console.log('from', from);
+
+	if (to.meta.title) {
+		document.title = to.meta.title
+	}
 
 	next()
 })
