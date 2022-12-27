@@ -24,7 +24,7 @@ async.series([
 // function createUsers(callback){
 //     const user = new User({
 //         username: 'Serg',
-//         password: "2apse1992"
+//         password: "123"
 //     });
 //     user.save(function (err){
 //         callback(err, user)
@@ -32,12 +32,15 @@ async.series([
 // }
 
 function createUrlNew(callback) {
-    const url = new UrlNew({
-        url: 'https://www.mongodb.com/docs/drivers/node/current/'
-    });
-    url.save(function (err) {
-        callback(err, url)
-    })
+	UrlNew.insertMany([
+		{url: 'https://primpress.ru/'},
+		{url: 'https://mirokolonas.xyz/'},
+		{url: 'https://dni.ru/'},
+		{url: 'https://solenka.info/'},
+		{url: 'https://ofigeno.ru/'},
+	]).then(function(err){
+		callback(err)
+	})
 }
 
 // function createStat(callback){
@@ -76,7 +79,3 @@ function createUrlNew(callback) {
 //         callback(err, task)
 //     })
 // }
-
-function closeConnectDb(callback) {
-    mongoose.disconnect(callback);
-}

@@ -17,7 +17,14 @@ const usePuppeteer = async () => {
 
 	// Нужно убивать браузер, после завершения проверки 
 	const browser = await puppeteer.launch({
-		headless: false,
+		executablePath: '/usr/bin/google-chrome',
+		args: [
+			"--disable-gpu",
+			"--disable-dev-shm-usage",
+			"--disable-setuid-sandbox",
+			"--no-sandbox",
+		],
+		headless: true,
 		'ignoreHTTPSErrors': true
 	})
 

@@ -13,7 +13,5 @@ cabinetRouter.use('/task/:taskId/', cabinetController.getTaskId);
 
 cabinetRouter.use('/start/task', cabinetController.startTask);
 cabinetRouter.use('/stop/task', cabinetController.stopTask);
-// cabinetRouter.use('/test', cabinetController.test);
-
 
 module.exports = cabinetRouter;

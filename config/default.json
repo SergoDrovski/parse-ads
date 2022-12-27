@@ -1,0 +1,6 @@
+{
+  "port": 3000,
+  "mongoose": {
+    "uri": "mongodb+srv://ascorpick:z4dVpjC0On3KAw3s@urldb.igpfrmb.mongodb.net/urldb?retryWrites=true&w=majority"
+  }
+}

@@ -1,0 +1,11 @@
+version: '3.9'
+services:   
+   app:
+      build:
+         context: ./
+         dockerfile: Dockerfile
+      volumes:
+         - '.:/home/node/app'
+      command: npm run start:dev
+      ports:
+         - "80:3000"

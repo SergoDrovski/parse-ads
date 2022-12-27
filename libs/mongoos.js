@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
-const config = require("../config/index.js");
+const config = require("config");
 
+// проверить await
 async function connectDb() {
     try{
-        await mongoose.connect(config.get('mongoose:uri'));
+        await mongoose.connect(config.get('mongoose.uri'));
         console.log("Сервер ожидает подключения...");
     }
     catch(err) {
@@ -21,9 +22,5 @@ async function disconnectDb() {
         return new Error('error disconnect Db');
     }
 }
-
 exports.connectDb = connectDb;
 exports.disconnectDb = disconnectDb;
-// mongoose.connect(config.get('mongoose:uri'));
-//
-// module.exports = mongoose;
