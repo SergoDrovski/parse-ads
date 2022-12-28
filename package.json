@@ -5,8 +5,8 @@
 	"scripts": {
 		"start": "node ./bin/www",
 		"start:dev": "nodemon app.js",
-		"dev-client": "vite",
-		"build-client": "vite build"
+		"dev-client": "vite --host",
+		"build-client": "vite build --emptyOutDir"
 	},
 	"dependencies": {
 		"-": "^0.0.1",
@@ -14,6 +14,7 @@
 		"axios": "^1.2.1",
 		"config": "^3.3.8",
 		"cookie-parser": "~1.4.4",
+		"cors": "^2.8.5",
 		"debug": "~2.6.9",
 		"ejs": "~2.6.1",
 		"express": "~4.16.1",
@@ -22,14 +23,15 @@
 		"mongoose": "^6.0.5",
 		"morgan": "~1.9.1",
 		"nconf": "^0.12.0",
-		"uuid": "^9.0.0",
 		"puppeteer": "19.3.0",
+		"uuid": "^9.0.0",
 		"vue": "^3.2.45",
 		"vue-router": "^4.1.6"
 	},
 	"devDependencies": {
 		"@vitejs/plugin-vue": "^4.0.0",
 		"autoprefixer": "^10.4.13",
+		"nodemon": "^2.0.20",
 		"postcss": "^8.4.20",
 		"sass": "^1.57.1",
 		"tailwindcss": "^3.2.4",

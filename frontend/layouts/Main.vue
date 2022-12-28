@@ -5,8 +5,8 @@
 		<div class="flex flex-col flex-1">
 			<TheHeader />
 			
-			<main class="h-full pb-16 overflow-y-auto">
-				<div class="container px-6 mx-auto grid">
+			<main class="h-full pb-6 overflow-y-auto">
+				<div class="container p-6 mx-auto grid">
 					<router-view v-slot="{ Component }">
 						<Transition name="fade" mode="out-in">
 							<component :is="Component" :key="$route.path"></component>

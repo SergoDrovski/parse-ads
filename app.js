@@ -4,21 +4,23 @@ const config = require("config");
 const path = require("path");
 const logger = require("morgan");
 const cookieParser = require("cookie-parser");
-
+const cors = require('cors')
 
 // создаем объект приложения
 const app = express();
 app.set('port', config.get('port'));
 
+app.use(cors());
+
 //view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'frontend/dist')));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'build-frontend')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 //подкл маршруты
 // const userRouter = require("./routes/userRouter.js");

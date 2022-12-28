@@ -15,7 +15,9 @@ WORKDIR /home/node/app
 
 COPY ./package*.json ./
 
-RUN npm install  -g nodemon  && npm install
+# RUN npm install -g nodemon && npm install
+RUN npm install
+# RUN npm run build-client
 
 COPY  . .
 

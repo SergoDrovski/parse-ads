@@ -8,4 +8,4 @@ services:
          - '.:/home/node/app'
       command: npm run start:dev
       ports:
-         - "80:3000"
+         - "4200:3000"

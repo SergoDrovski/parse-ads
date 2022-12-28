@@ -18,17 +18,20 @@ const routes = [{
 		},
 		children: [
 			{ 
-				path: '/cabinet/stats', 
+				path: '/cabinet/stats',
+				name: 'cabinet:stats',
 				component: CabinetStats,
 				title: 'Статистика'
 			},
 			{ 
-				path: '/cabinet/task/:id', 
+				path: '/cabinet/task/:id',
+				name: 'cabinet:task:id',
 				component: CabinetTask,
 				title: 'Просмотр задачи'
 			},
 			{ 
 				path: '/cabinet/task/:id/url', 
+				name: 'cabinet:task:url',
 				component: CabinetTaskUrl,
 				title: 'Ссылки в задаче'
 			},
@@ -74,8 +77,8 @@ const router = createRouter({
 
 // логика перед переходом по маршруту
 router.beforeEach((to, from, next) => {
-	console.log('to', to);
-	console.log('from', from);
+	// console.log('to', to);
+	// console.log('from', from);
 
 	if (to.meta.title) {
 		document.title = to.meta.title
