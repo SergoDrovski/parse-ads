@@ -13,24 +13,24 @@ app.set('port', config.get('port'));
 app.use(cors());
 
 //view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'build-frontend')));
-// app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'build-frontend')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 //подкл маршруты
 // const userRouter = require("./routes/userRouter.js");
 const cabinetRouter = require("./routes/cabinetRouter.js");
-// const integrationRouter = require("./routes/integrationRouter.js");
+const integrationRouter = require("./routes/integrationRouter.js");
 
 //Опр. маршруты
 // app.use("/users", userRouter);
 app.use("/cabinet", cabinetRouter);
-// app.use("/integration", integrationRouter);
+app.use("/integration", integrationRouter);
 
 
 app.use(function(err, req, res, next) {

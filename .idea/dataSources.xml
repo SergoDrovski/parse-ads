@@ -8,11 +8,11 @@
       <jdbc-url>mongodb://localhost:27017/urldb</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="urldb@urldb.igpfrmb.mongodb.net" uuid="25c7706d-df26-4d41-9279-a4aeb06fbc97">
+    <data-source source="LOCAL" name="urldb@urldb.igpfrmb.mongodb.net" uuid="31593e7b-f85c-4cc9-85cf-d03b95a07caa">
       <driver-ref>mongo</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
-      <jdbc-url>mongodb+srv://urldb.igpfrmb.mongodb.net/urldb?retryWrites=true&amp;w=majority</jdbc-url>
+      <jdbc-url>mongodb+srv://urldb.igpfrmb.mongodb.net/urldb</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

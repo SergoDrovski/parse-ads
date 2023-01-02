@@ -2,43 +2,34 @@ const { connectDb, disconnectDb } = require('../libs/mongoos.js');
 const UrlNew = require('../models/urlNew.js').model;
 const KeySearch = require('../models/keySearch.js').model;
 const axios = require("axios");
-const fs = require('fs');
-const path = require('path');
 
 exports.setKeySearch = async function(request, response, next){
+	 if(!request.body.keys) return next(new Error('no data!'))
     let error = await connectDb();
     if(error instanceof Error) next(error)
 
-    const arrayKey = await getKeyInReq(request);
-
-    const arrayModel = arrayKey.map((el)=>{
+	 // Валидация и форматирование данных
+	 const formattingData = new FormattingDataForm(request.body.keys);
+	 if(!formattingData.getStatus()) {
+		 response.json({status: formattingData.getStatus(), formattingData: formattingData.getData()});
+		 await disconnectDb();
+		 return 
+	 }
+	 
+    const arrayModel = formattingData.getData().map((el)=>{
         return { key: el }
     })
 
-    await KeySearch.insertMany(arrayModel).then(function(){
+    await KeySearch.insertMany(arrayModel).then(function(data){
         disconnectDb();
         response.status(200);
-        response.json({mess: true});
+        response.json({status: true, formattingData: data});
     }).catch(function(error){
         disconnectDb();
         console.log(error)
         next(new Error('error save new Key in db'))
     });
 };
-async function getKeyInReq(request) {
-    return [
-        'без рецепта',
-        'вкусные +и простые рецепты',
-        'вкусные рецепты',
-        'вкусные рецепты +с фото',
-        'говядина рецепты',
-        'домашние рецепты',
-        'домашние рецепты +с фото',
-        'классический рецепт',
-        'печень рецепт',
-        'пошаговый рецепт'
-    ];
-}
 
 exports.getApiUrl = async function(request, response, next){
     let error = await connectDb();
@@ -77,6 +68,31 @@ async function ApiXMLRiver(arrayKey) {
 		})
 
 }
-// async function ApiYandexTest() {
-//     return fs.readFileSync(path.join(__dirname,'url.txt' )).toString().split("\n");
-// }
+
+
+// Функция форматированния строки в массив значений, разделённых ","
+class FormattingDataForm {
+	constructor(data = "") {
+		this.data = data;
+		this.res = [];
+		this.status = this.formatting();
+	}
+
+	formatting() {
+		const arrayData = this.data.split(",");
+		debugger
+		for(let key of arrayData) {
+			let newKey = key.replace(/[&\/\\#,()$~%.'":*?<>{}]/g, '').trim();
+			if(newKey.length !== 0) this.res.push(newKey);
+		}
+		return this.res.length !== 0
+	}
+
+	getData() {
+		return this.res;
+	}
+
+	getStatus() {
+		return this.status;
+	}
+}
