@@ -23,8 +23,8 @@ async.series([
 
 // function createUsers(callback){
 //     const user = new User({
-//         username: 'Serg',
-//         password: "2apse1992"
+//         username: 'test',
+//         password: "123"
 //     });
 //     user.save(function (err){
 //         callback(err, user)
