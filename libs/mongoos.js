@@ -4,6 +4,7 @@ const config = require("config");
 // проверить await
 async function connectDb() {
     try{
+		  mongoose.set('strictQuery', true);
         await mongoose.connect(config.get('mongoose.uri'));
         console.log("Сервер ожидает подключения...");
     }

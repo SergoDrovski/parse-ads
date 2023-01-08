@@ -33,26 +33,3 @@ exports.workerState = workerState;
 exports.stopWorker = function stopWorker(id) {
     workerState[id].terminate();
 }
-
-
-// let idWorker = run((data)=>{
-//     if(data instanceof Error){
-//         delete workerState[idWorker]
-//         if(data.exitCode === 1){
-//             console.log(data)
-//             return false;
-//         }
-//     }
-//     else {
-//         console.log('Получаем выполненную задачу: ')
-//         console.log(data)
-//         return false;
-//     }
-// });
-// workerState[idWorker].postMessage({ _id: '638cf00f21f5e5493d744f22'});
-//
-// function run(callback) {
-//     const id = uuidv4();
-//     workerState[id] = runWorker(path.join(__dirname, './parseWorker.js'), callback)
-//     return id;
-// }

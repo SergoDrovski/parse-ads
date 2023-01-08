@@ -24,15 +24,16 @@ parentPort.on('message', (idTask) => {
 });
 
 async function main(idTask) {
-    // console.log(idTask)
     //Делим задачу на итерации
-    // const countUrl =  await UrlNew.count();
-    let iterate = 1;
+	 const part = 8;
+    const countUrl =  await UrlNew.count();
+    let iterate = Math.ceil(countUrl/part);
+    // let iterate = 1;
     let logError = [];
     let statusTask;
 
     while(iterate > 0) {
-        await runPartTask(idTask)
+        await runPartTask(idTask, part)
             .then((task)=>{
                 iterate--;
             })
@@ -44,15 +45,13 @@ async function main(idTask) {
 
     statusTask = logError.length !== 0 ? "failed" : "completed";
     const errorMess = logError.length !== 0 ? logError.pop().message : "";
-
-    
     return await updateTaskInDb(idTask, statusTask, errorMess);
 }
 
-async function runPartTask(idTask) {
+async function runPartTask(idTask, part) {
     try {
         //Получаем часть урлов
-        let urlDoc =  await UrlNew.find({}).limit(1);
+        let urlDoc =  await UrlNew.find({}).limit(part);
 
         if(urlDoc.length === 0) {
             throw new Error('отсутсвуют данные в db')

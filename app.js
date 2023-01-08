@@ -1,4 +1,7 @@
-// подключение express
+// подключение ENV
+require('dotenv').config()
+
+// подключение express	
 const express = require("express");
 const config = require("config");
 const path = require("path");
@@ -9,7 +12,6 @@ const cors = require('cors')
 // создаем объект приложения
 const app = express();
 app.set('port', config.get('port'));
-
 app.use(cors());
 
 //view engine setup

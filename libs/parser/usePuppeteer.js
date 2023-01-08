@@ -60,7 +60,10 @@ const usePuppeteer = async () => {
 			} catch (e) {
 				return { ...resultObj, page_status: 500,  is_valid_link: false}
 			}
-
+			
+			// Ждём 2 сек для загрузки страницы 
+			await new Promise(r => setTimeout(r, 2000));
+			
 			// действия на странице открытой ссылки
 			await page.evaluate(async (args) => {
 				// создаем div чтобы скролить к нему в конец сайта

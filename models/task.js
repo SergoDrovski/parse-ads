@@ -1,5 +1,10 @@
 const {Schema, model} = require('mongoose');
 
+// Статусы поля status
+//  "check"
+//  "failed"
+//  "completed"
+
 const taskScheme = new Schema({
     completed: {
         type: Date
