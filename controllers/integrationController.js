@@ -71,6 +71,41 @@ exports.deleteKeySearch = async function(request, response, next){
 	});
 }
 
+//Получение списка задач по поиску новых ссылок
+exports.getAllSearchStatus = async function(request, response, next){
+	let error = await connectDb();
+	if(error instanceof Error) next(error)
+
+	let task = await StatusSearch.find({});
+	await disconnectDb();
+	response.status(200);
+	response.json(task);
+};
+
+//Получение задачи по id
+exports.getSearchStatusId = async function(request, response, next){
+	let error = await connectDb();
+	if(error instanceof Error) next(error)
+	const id = request.params['statusId'].trim();
+	await StatusSearch.findById(id).then(task => {
+		if(task) {
+			UrlNew.find({ status_search_id: id }).then(url=>{
+				response.status(200);
+				response.json({
+					task,
+					url
+				});
+			});
+		}
+	}).catch(error => {
+		response.json({
+			status: false,
+			statusCode: 400,
+			error: error.message});
+	});
+	await disconnectDb();
+};
+
 exports.getUrlApi = async function(request, response, next){
 	if(!request.body.conf) return next(new Error('no data!'))
     let error = await connectDb();
@@ -251,7 +286,6 @@ class FormattingDataForm {
 
 	formatting() {
 		const arrayData = this.data.split(",");
-		debugger
 		for(let key of arrayData) {
 			let newKey = key.replace(/[&\/\\#,()$~%.'":*?<>{}]/g, '').trim();
 			if(newKey.length !== 0) this.res.push(newKey);

@@ -1,5 +1,6 @@
 const { connectDb, disconnectDb } = require('../libs/mongoos.js');
 const { run, stopWorker, workerState} = require('../worker/createWorker.js');
+const {model: UrlNew} = require("../models/urlNew");
 const Stat = require('../models/stats.js').model;
 const Task = require('../models/task.js').model;
 const UrlCompl = require('../models/urlCopleted.js').model;
@@ -63,34 +64,43 @@ exports.startTask = async function(request, response, next){
             response.redirect(`/cabinet/task/${dbTask._id}/`)
             return true;
         } else {
-            //Создание задачи
-            const newTask = new Task({
-                status: "check",
-            });
+			  	//Проверка наличия непровернных ссылок!
+			  UrlNew.count().then(count => {
+				  if(count === 0) {
+					  disconnectDb();
+					  response.status(403);
+					  response.json({status: false, mess: 'Нет ссылок для проверки!'})
+					  return count;
+				  }
 
-            //Сохранение
-            newTask.save().then(() => {
+				  //Создание задачи
+				  const newTask = new Task({
+					  status: "check",
+				  });
 
-                // Если Ок то =>
-                //Создание воркера
-                const idWorker = run((data)=>{
-                    delete workerState[idWorker]
-                    if(data instanceof Error){
-                        if(data.exitCode === 1){
-                            console.log(data)
-                            return false;
-                        }
-                    }
-                });
+				  //Сохранение
+				  newTask.save().then(() => {
 
-                //отпавляем задачу воркеру
-                workerState[idWorker].postMessage({ _id: newTask._id.valueOf() });
-                response.json(newTask);
+					  // Если Ок то =>
+					  //Создание воркера
+					  const idWorker = run((data)=>{
+						  delete workerState[idWorker]
+						  if(data instanceof Error){
+							  if(data.exitCode === 1){
+								  console.log(data)
+								  return false;
+							  }
+						  }
+					  });
 
-            }).catch((err)=>{
-                if (err) return next(err);
-            });
+					  //отпавляем задачу воркеру
+					  workerState[idWorker].postMessage({ _id: newTask._id.valueOf() });
+					  response.json(newTask);
 
+				  }).catch((err)=>{
+					  if (err) return next(err);
+				  });
+			  });
         }
     });
 };
