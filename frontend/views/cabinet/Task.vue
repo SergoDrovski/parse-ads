@@ -1,7 +1,6 @@
 <template>
 	<div class="bg-white rounded p-4 shadow-md overflow-auto">
-		<div v-if="!task && isLoading">Loading ...</div>
-		<div v-else-if="errors">{{ errors }}</div>
+		<div v-if="errors">{{ errors }}</div>
 		<div v-else>
 			<span>Source</span>
 			<pre class="p-2 rounded bg-orange-100 overflow-auto">{{ task }}</pre>
@@ -14,16 +13,13 @@
 
 <script setup>
 import { useRoute } from 'vue-router';
-import { onMounted } from 'vue';
 import { ref } from '@vue/reactivity'
 import useApi from '@/use/api.js';
 
 const route = useRoute()
 
-const { fetchTaskById, isLoading, errors } = useApi()
+const { fetchTaskById, errors } = useApi()
 const task = ref(null)
 
-onMounted(async () => {
-	task.value = await fetchTaskById(route.params.id)
-})
+task.value = await fetchTaskById(route.params.id)
 </script>

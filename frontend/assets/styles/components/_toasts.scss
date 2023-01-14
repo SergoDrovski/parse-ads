@@ -1,0 +1,43 @@
+$vt-namespace: 'Vue-Toastification' !default;
+$vt-toast-min-width: 326px !default;
+$vt-toast-max-width: 600px !default;
+$vt-toast-background: var(--color-white);
+
+$vt-toast-min-height: calc(var(--space) * 3);
+$vt-toast-max-height: 800px !default;
+
+$vt-color-default: #1976d2 !default;
+$vt-text-color-default: var(--color-white);
+$vt-color-info: var(--color-blue);
+$vt-text-color-info: var(--color-white);
+$vt-color-success: var(--color-success);
+$vt-text-color-success: var(--color-white);
+$vt-color-warning: #ed9e0c !default;
+$vt-text-color-warning: var(--color-white);
+$vt-color-error: var(--color-danger);
+$vt-text-color-error: var(--color-white);
+
+$vt-color-progress-default: linear-gradient(to right, #1976d2, #5ac8fa, #007aff, #34aadc, #5856d6, #ff2d55) !default;
+
+$vt-mobile: "only screen and (max-width : 600px)" !default;
+$vt-not-mobile: "only screen and (min-width : 600px)" !default;
+$vt-font-family: "Lato", Helvetica, "Roboto", Arial, sans-serif !default;
+$vt-z-index: 9999 !default;
+
+// Import the regular Vue Toastification stylesheets (or create your own)
+@import "vue-toastification/src/scss/_variables";
+@import "vue-toastification/src/scss/_toastContainer";
+@import "vue-toastification/src/scss/_toast";
+@import "vue-toastification/src/scss/_closeButton";
+@import "vue-toastification/src/scss/_progressBar";
+@import "vue-toastification/src/scss/_icon";
+@import "vue-toastification/src/scss/animations/_bounce";
+
+.Vue-Toastification__toast {
+	padding: 16px 14px !important;
+	align-items: center !important;
+	border-radius: 4px !important;
+}
+.Vue-Toastification__icon {
+	margin-right: 14px !important;
+}

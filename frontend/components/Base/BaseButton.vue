@@ -78,7 +78,6 @@ const classes = computed(() => {
 		"text-sm",
 		"border",
 		"focus:outline-none",
-		"active:bg-transparent",
 		...MAP[props.color],
 	]
 })

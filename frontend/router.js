@@ -1,10 +1,11 @@
 import { createRouter, createWebHashHistory } from "vue-router"
 
 import CabinetStats from '@/views/cabinet/Stats.vue'
-import CabinetTask from '@/views/cabinet/Task.vue'
+// import CabinetTask from '@/views/cabinet/Task.vue'
 import CabinetTaskUrl from '@/views/cabinet/TaskUrl.vue'
-import CabinetTaskStart from '@/views/cabinet/TaskStart.vue'
-import CabinetTaskStop from '@/views/cabinet/TaskStop.vue'
+// import CabinetTaskStart from '@/views/cabinet/TaskStart.vue'
+// import CabinetTaskStop from '@/views/cabinet/TaskStop.vue'
+import CabinetIntegration from '@/views/cabinet/Integration.vue'
 
 const routes = [{
 		path: '/',
@@ -23,12 +24,12 @@ const routes = [{
 				component: CabinetStats,
 				title: 'Статистика'
 			},
-			{ 
-				path: '/cabinet/task/:id',
-				name: 'cabinet:task:id',
-				component: CabinetTask,
-				title: 'Просмотр задачи'
-			},
+			// { 
+			// 	path: '/cabinet/task/:id',
+			// 	name: 'cabinet:task:id',
+			// 	component: CabinetTask,
+			// 	title: 'Просмотр задачи'
+			// },
 			{ 
 				path: '/cabinet/task/:id/url', 
 				name: 'cabinet:task:url',
@@ -36,14 +37,10 @@ const routes = [{
 				title: 'Ссылки в задаче'
 			},
 			{ 
-				path: '/cabinet/start/task', 
-				component: CabinetTaskStart,
-				title: 'Запустить новую задачу'
-			},
-			{ 
-				path: '/cabinet/stop/task', 
-				component: CabinetTaskStop,
-				title: 'Остановить задачу'
+				path: '/cabinet/integration', 
+				name: 'cabinet:integration',
+				component: CabinetIntegration,
+				title: 'Интеграция'
 			},
 		]
 	},
