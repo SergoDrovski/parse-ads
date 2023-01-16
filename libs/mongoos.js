@@ -2,26 +2,28 @@ const mongoose = require('mongoose');
 const config = require("config");
 
 // проверить await
-async function connectDb() {
+function connectDb() {
     try{
-		  mongoose.set('strictQuery', true);
-        await mongoose.connect(config.get('mongoose.uri'));
-        console.log("Сервер ожидает подключения...");
-    }
+		 mongoose.Promise = global.Promise;
+		 mongoose.set('strictQuery', true);
+		 mongoose.connect(config.get('mongoose.uri'));
+		 return mongoose.connection;
+	 }
     catch(err) {
         console.log(err);
         return new Error('error connect Db')
     }
 }
-async function disconnectDb() {
-    try{
-        await mongoose.disconnect();
-        console.log("Подключение закрыто...");
-    }
-    catch(err) {
-        console.log(err);
-        return new Error('error disconnect Db');
-    }
+
+function disconnectDb() {
+	try{
+		mongoose.disconnect();
+		console.log("Подключение закрыто...");
+	}
+	catch(err) {
+		console.log(err);
+		return new Error('error disconnect Db');
+	}
 }
 exports.connectDb = connectDb;
 exports.disconnectDb = disconnectDb;

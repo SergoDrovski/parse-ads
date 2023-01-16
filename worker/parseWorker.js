@@ -6,29 +6,22 @@ const UrlCompl = require('../models/urlCopleted.js').model;
 const Task = require('../models/task.js').model;
 
 parentPort.on('message', (idTask) => {
-     //Подкл к базе
-    connectDb().then(()=>{
+			console.log('Запуск основной работы воркера')	
         //Запуск основной работы воркера
         main(idTask).then((data)=>{
             parentPort.postMessage(data);
-            disconnectDb();
         }).catch((err) => {
             parentPort.postMessage(new Error(`ошибка в запуске основной работы: ${err.message}`));
-            disconnectDb();
         });
-    }).catch((err) => {
-        console.log(err)
-        parentPort.postMessage(new Error(`ошибка подключения к базе: ${err.message}`));
-        disconnectDb();
-    })
 });
 
 async function main(idTask) {
+	await connectDb();
     //Делим задачу на итерации
-	 const part = 8;
+	 const part = 1;
     const countUrl =  await UrlNew.count();
-    let iterate = Math.ceil(countUrl/part);
-    // let iterate = 1;
+    // let iterate = Math.ceil(countUrl/part);
+    let iterate = 1;
     let logError = [];
     let statusTask;
 
@@ -42,10 +35,13 @@ async function main(idTask) {
                 logError.push(err)
         });
     }
-
+	 
     statusTask = logError.length !== 0 ? "failed" : "completed";
     const errorMess = logError.length !== 0 ? logError.pop().message : "";
-    return await updateTaskInDb(idTask, statusTask, errorMess);
+	 
+    const updateTask = await updateTaskInDb(idTask, statusTask, errorMess);
+	 await disconnectDb();
+	 return updateTask;
 }
 
 async function runPartTask(idTask, part) {

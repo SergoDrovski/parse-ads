@@ -8,6 +8,8 @@ const path = require("path");
 const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require('cors')
+const RespSchema = require("./libs/resp/ResponseSchema.js").schema;
+const { connectDb, disconnectDb } = require('./libs/mongoos.js');
 
 // создаем объект приложения
 const app = express();
@@ -39,13 +41,23 @@ app.use(function(err, req, res, next) {
   if(req.app.get('env') === 'development') {
     console.log(err)
     res.status(500);
-    res.json({mess: err.message});
+    res.json(new RespSchema(500,null,err.message));
   } else {
     res.status(500);
     res.send('error');
   }
 });
 
+const startServer = () => {
+	// начинаем прослушивать подключения на порту
+	app.listen(config.get('port'));
+	console.log(`App started on port ${config.get('port')}`)
+}
 
-// начинаем прослушивать подключения на 3000 порту
-app.listen(config.get('port'));
+connectDb()
+	.on('error', console.log)
+	.on('disconnected', connectDb)
+	.once('open', startServer);
+
+
+

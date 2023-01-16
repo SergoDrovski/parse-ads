@@ -1,6 +1,6 @@
-const { connectDb, disconnectDb } = require('../libs/mongoos.js');
 const { run, stopWorker, workerState} = require('../worker/createWorker.js');
 const {model: UrlNew} = require("../models/urlNew");
+const {schema: RespSchema} = require("../libs/resp/ResponseSchema");
 const Stat = require('../models/stats.js').model;
 const Task = require('../models/task.js').model;
 const UrlCompl = require('../models/urlCopleted.js').model;
@@ -11,65 +11,66 @@ exports.index = function(request, response){
 };
 
 exports.getStats = async function(request, response, next){
-    let error = await connectDb();
-    if(error instanceof Error) next(error)
-
     let dbStats = await Stat.find();
     let dbTask = await Task.find({}, '-urls_complete');
-    await disconnectDb();
-
     let stat = dbStats[0];
-    response.json({stat, dbTask});
+	 response.status(200);
+    response.json(new RespSchema(200,{stat, dbTask},null));
 };
 
 exports.getTaskId = async function(request, response, next){
-    let error = await connectDb();
-    if(error instanceof Error) next(error)
-
-    const id = request.params['taskId'];
-    const task = await Task.findById(id, '-urls_complete');
-    await disconnectDb();
-
-    if(task) response.json(task);
-    else next(new Error('not found task in db'))
+    const id = request.params['taskId'].trim();
+    await Task.findById(id, '-urls_complete').then(task => {
+		 response.status(200)
+		 if(task) {
+			 response.json(new RespSchema(200,task,null))
+		 }
+		 else response.json(new RespSchema(200,task,'not found task in db'));
+	 }).catch(error => next(error));
 };
 
 exports.getUrlInTask = async function(request, response, next){
-    let error = await connectDb();
-    if(error instanceof Error) next(error)
-
-    const id = request.params['taskId'];
-
-    const urlsCompl = await UrlCompl.find({ task_id: id });
-    await disconnectDb();
-
-    if(urlsCompl) {
-        urlsCompl.sort(function(first, second) {
-            return (first.ads_exist === second.ads_exist) ? 0 : first.ads_exist ? -1 : 1;
-        });
-        response.json(urlsCompl);
-    }
-    else next(new Error('not found task in db'))
+    const id = request.params['taskId'].trim();
+    await UrlCompl.find({ task_id: id }).then(urlsCompl => {
+		 response.status(200);
+		 if(urlsCompl.length !== 0) {
+			 urlsCompl.sort(function(first, second) {
+				 return (first.ads_exist === second.ads_exist) ? 0 : first.ads_exist ? -1 : 1;
+			 });
+			 response.json(new RespSchema(200,urlsCompl,null));
+		 }else {
+			 response.json(new RespSchema(200,null,'not found url in Task'));
+		 }
+	 }).catch(error => next(error));
 };
 
+//Проверка на уже запущенную задачу
+exports.checkStartTask = async function(request, response, next){
+	await Task.findOne({status: "check"}).then(task => {
+		response.status(200);
+		if(task) {
+			response.json(new RespSchema(200,{inProcess:true}))
+		} else {
+			response.json(new RespSchema(200,{inProcess:false}))
+		}
+	}).catch(err=>{
+		next(err)
+	})
+}
 
 exports.startTask = async function(request, response, next){
-    let error = await connectDb();
-    if(error instanceof Error) next(error)
-
     //Проверка наличие активной задачи
     await Task.findOne({status: "check"}).then(dbTask => {
         if(dbTask) {
-            disconnectDb();
+			  	response.status(300);
             response.redirect(`/cabinet/task/${dbTask._id}/`)
             return true;
         } else {
 			  	//Проверка наличия непровернных ссылок!
 			  UrlNew.count().then(count => {
 				  if(count === 0) {
-					  disconnectDb();
 					  response.status(403);
-					  response.json({status: false, mess: 'Нет ссылок для проверки!'})
+					  response.json(new RespSchema(403,null,'Нет ссылок для проверки!'));
 					  return count;
 				  }
 
@@ -95,8 +96,8 @@ exports.startTask = async function(request, response, next){
 
 					  //отпавляем задачу воркеру
 					  workerState[idWorker].postMessage({ _id: newTask._id.valueOf() });
-					  response.json(newTask);
-
+					  response.status(200);
+					  response.json(new RespSchema(200,newTask,null));
 				  }).catch((err)=>{
 					  if (err) return next(err);
 				  });
@@ -111,8 +112,6 @@ exports.stopTask = async function(request, response, next){
         workerState[idWorker[0]].terminate();
         delete workerState[idWorker[0]];
     }
-    let error = await connectDb();
-    if(error instanceof Error) next(error)
 
     //Проверка наличие активной задачи
     const task = await Task.findOne({ status: 'check' });
@@ -121,16 +120,14 @@ exports.stopTask = async function(request, response, next){
             completed: Date.now(),
             status: "completed"
         }).then((data)=>{
-            disconnectDb();
-            response.json(data);
+            response.status(200);
+            response.json(new RespSchema(200,data,null));
         }).catch(function(error){
-            disconnectDb();
             console.log(error)
             next(new Error('error update task in db'))
         });
     } else {
-        await disconnectDb();
-        response.status('404')
-        response.json({ms: 'Нет активных задач!'});
+        response.status(404)
+        response.json(new RespSchema(404,null,'Нет активных задач!'));
     }
 };

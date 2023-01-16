@@ -6,12 +6,13 @@ const cabinetRouter = express.Router();
 
 cabinetRouter.get('/', cabinetController.index);
 
-cabinetRouter.use('/stats', cabinetController.getStats);
+cabinetRouter.get('/stats', cabinetController.getStats);
 
-cabinetRouter.use('/task/:taskId/url', cabinetController.getUrlInTask);
-cabinetRouter.use('/task/:taskId/', cabinetController.getTaskId);
+cabinetRouter.get('/task/:taskId/url', cabinetController.getUrlInTask);
+cabinetRouter.get('/task/:taskId/', cabinetController.getTaskId);
 
-cabinetRouter.use('/start/task', cabinetController.startTask);
-cabinetRouter.use('/stop/task', cabinetController.stopTask);
+cabinetRouter.get('/check-task', cabinetController.checkStartTask);
+cabinetRouter.get('/start/task', cabinetController.startTask);
+cabinetRouter.get('/stop/task', cabinetController.stopTask);
 
 module.exports = cabinetRouter;

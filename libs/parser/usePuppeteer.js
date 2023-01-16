@@ -1,17 +1,5 @@
 const puppeteer = require("puppeteer");
-// const axios = require("axios");
 const { patternSearch } = require("./PatternSearch.js");
-
-
-// const isLoadingPage = async (url) => {
-// 	return await axios.get(url)
-// 		.then(res => {
-// 			return { valid: true, status: res.status }
-// 		})
-// 		.catch(err => {
-// 			return { valid: false, status: err.status }
-// 		})
-// }
 
 const usePuppeteer = async () => {
 

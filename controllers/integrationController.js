@@ -1,21 +1,17 @@
-const { connectDb, disconnectDb } = require('../libs/mongoos.js');
 const UrlNew = require('../models/urlNew.js').model;
 const KeySearch = require('../models/keySearch.js').model;
 const StatusSearch = require('../models/statusSearchNewUrl.js').model;
 const axios = require("axios");
 const convert = require("xml-js");
+const RespSchema = require("../libs/resp/ResponseSchema").schema;
 
 //Сохранение ключей для поиска URL 
 exports.setKeySearch = async function(request, response, next){
 	 if(!request.body.keys) return next(new Error('no data!'))
-    let error = await connectDb();
-    if(error instanceof Error) next(error)
-
 	 // Валидация и форматирование данных
 	 const formattingData = new FormattingDataForm(request.body.keys);
 	 if(!formattingData.getStatus()) {
-		 response.json({status: formattingData.getStatus(), formattingData: formattingData.getData()});
-		 await disconnectDb();
+		 response.json(new RespSchema(404,null,`data is not correct format`));
 		 return 
 	 }
 	 
@@ -24,11 +20,9 @@ exports.setKeySearch = async function(request, response, next){
     })
 
     await KeySearch.insertMany(arrayModel, {ordered: false}).then(function(data){
-        disconnectDb();
         response.status(200);
-        response.json({status: true, formattingData: data});
+        response.json(new RespSchema(200,data,null));
     }).catch(function(error){
-        disconnectDb();
         console.log(error)
         next(new Error('error save new Key in db'))
     });
@@ -36,18 +30,13 @@ exports.setKeySearch = async function(request, response, next){
 
 //Получение ключей для поиска
 exports.getKeySearch = async function(request, response, next){
-	let error = await connectDb();
-	if(error instanceof Error) next(error)
-
 	await KeySearch.find({}).then(function(data){
-		disconnectDb();
 		let keySearchToObj = data.map((elem)=>{
 			return elem.toObject();
 		})
 		response.status(200);
-		response.json(keySearchToObj);
+		response.json(new RespSchema(200,keySearchToObj,null));
 	}).catch(function(error){
-		disconnectDb();
 		console.log(error)
 		next(new Error('error get Key in db'))
 	});
@@ -55,98 +44,97 @@ exports.getKeySearch = async function(request, response, next){
 
 //Удаление ключей
 exports.deleteKeySearch = async function(request, response, next){
-	if(!request.body) return next(new Error('no data!'))
-	let error = await connectDb();
-	if(error instanceof Error) next(error)
+	if(!request.body && Array.isArray(request.body)) return next(new Error('no data!'))
 	
 	//Передача массива, сосержащего только id ключей
 	await KeySearch.deleteMany({_id: { $in:request.body }}).then(function(data){
-		disconnectDb();
 		response.status(200);
-		response.json(data);
+		response.json(new RespSchema(200,data,null));
 	}).catch(function(error){
-		disconnectDb();
 		console.log(error)
 		next(new Error('error delete Key in db'))
 	});
 }
 
 //Получение списка задач по поиску новых ссылок
-exports.getAllSearchStatus = async function(request, response, next){
-	let error = await connectDb();
-	if(error instanceof Error) next(error)
-
+exports.getAllSearchProcess = async function(request, response, next){
 	let task = await StatusSearch.find({});
-	await disconnectDb();
 	response.status(200);
-	response.json(task);
+	response.json(new RespSchema(200,task,null));
 };
 
 //Получение задачи по id
-exports.getSearchStatusId = async function(request, response, next){
-	let error = await connectDb();
-	if(error instanceof Error) next(error)
-	const id = request.params['statusId'].trim();
+exports.getSearchProcessId = async function(request, response, next){
+	const id = request.params['processId'].trim();
 	await StatusSearch.findById(id).then(task => {
 		if(task) {
 			UrlNew.find({ status_search_id: id }).then(url=>{
 				response.status(200);
-				response.json({
-					task,
-					url
-				});
+				response.json(new RespSchema(200,{taskNewUrl: task, url},null));
 			});
 		}
 	}).catch(error => {
-		response.json({
-			status: false,
-			statusCode: 400,
-			error: error.message});
+		response.json(new RespSchema(400,null,error.message));
 	});
-	await disconnectDb();
 };
+
+//Проверка на уже запущенную задачу
+exports.checkProcessSearch = async function(request, response, next){
+
+		await StatusSearch.findOne({status: "search"}).then(process => {
+			response.status(200);
+			if(process) {
+				response.json(new RespSchema(200,{inProcess:true}))
+			} else {
+				response.json(new RespSchema(200,{inProcess:false}))
+			}
+		}).catch(err=>{
+			next(err)
+		})
+}
 
 exports.getUrlApi = async function(request, response, next){
 	if(!request.body.conf) return next(new Error('no data!'))
-    let error = await connectDb();
-    if(error instanceof Error) next(error)
+	const inProcess = await StatusSearch.findOne({status: "search"});
+   if(inProcess) {
+		response.status(300);
+		response.redirect(`/integration/get-search-id/${inProcess._id}/`)
+	}else{
+		
+		// Получение и преобразование запросов для поиска URL
+		const keyQueryObj = await KeySearch.find({});
+		const arrayQuery = keyQueryObj.map((el)=>{
+			return el.key;
+		})
+		try {
+			// Получение функуции api для запросов или ошибки
+			const apiSearch = apiSwitchConnector(request.body.conf);
+			if (apiSearch.error !== null || apiSearch.func === null) {
+				console.log(apiSearch)
+				response.status(400);
+				response.json(new RespSchema(400,null,'нет подходящих Api'));
+				return
+			}
 
-	// Получение и преобразование запросов для поиска URL
-    const keyQueryObj = await KeySearch.find({});
-    const arrayQuery = keyQueryObj.map((el)=>{
-        return el.key;
-    })
-	
-	try {
-		// Получение функуции api для запросов или ошибки
-		const apiSearch = apiSwitchConnector(request.body.conf);
-		if (apiSearch.error !== null || apiSearch.func === null) {
-			console.log(apiSearch)
-			response.status(400);
-			response.json({mess: 'нет подходящих Api'});
-			return
+			// Создаём задание
+			const newStatusSearch = new StatusSearch({
+				status: "search",
+			});
+
+			//Сохранение
+			newStatusSearch.save().then((data) => {
+				// Если Ок то =>
+				// Загрузка ссылок частями через полученную api фукцию
+				response.status(200);
+				response.json(new RespSchema(200,data,null));
+				runSearchUrl(arrayQuery, apiSearch.func, data._id);
+			}).catch((err)=>{
+				if (err) return next(err);
+			});
+
+		} catch (e) {
+			next(e)
 		}
-		
-		// Создаём задание
-		const newStatusSearch = new StatusSearch({
-			status: "search",
-		});
-
-		//Сохранение
-		newStatusSearch.save().then((data) => {
-			// Если Ок то =>
-			// Загрузка ссылок частями через полученную api фукцию
-			response.status(200);
-			response.json(data);
-			runSearchUrl(arrayQuery, apiSearch.func, data._id);
-
-		}).catch((err)=>{
-			if (err) return next(err);
-		});
-		
-	} catch (e) {
-		await disconnectDb();
-		next(e)
 	}
 };
 
@@ -285,6 +273,7 @@ class FormattingDataForm {
 	}
 
 	formatting() {
+		if (typeof this.data !== 'string') return false
 		const arrayData = this.data.split(",");
 		for(let key of arrayData) {
 			let newKey = key.replace(/[&\/\\#,()$~%.'":*?<>{}]/g, '').trim();
