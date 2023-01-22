@@ -4,13 +4,14 @@ const {schema: RespSchema} = require("../libs/resp/ResponseSchema");
 const Stat = require('../models/stats.js').model;
 const Task = require('../models/task.js').model;
 const UrlCompl = require('../models/urlCopleted.js').model;
+const { ObjectID } = require('mongodb');
 
 
 exports.index = function(request, response){
     response.render('cabinet');
 };
 
-exports.getStats = async function(request, response, next){
+exports.getStats = async function(request, response){
     let dbStats = await Stat.find();
     let dbTask = await Task.find({}, '-urls_complete');
     let stat = dbStats[0];
@@ -18,30 +19,37 @@ exports.getStats = async function(request, response, next){
     response.json(new RespSchema(200,{stat, dbTask},null));
 };
 
-exports.getTaskId = async function(request, response, next){
-    const id = request.params['taskId'].trim();
-    await Task.findById(id, '-urls_complete').then(task => {
-		 response.status(200)
-		 if(task) {
-			 response.json(new RespSchema(200,task,null))
-		 }
-		 else response.json(new RespSchema(200,task,'not found task in db'));
-	 }).catch(error => next(error));
+exports.getTaskId = async function (request, response, next) {
+	try {
+		const id = new ObjectID(request.params['taskId'].trim());
+		await Task.findById(id, '-urls_complete').then(task => {
+			response.status(200)
+			if (task) {
+				response.json(new RespSchema(200, task, null))
+			} else response.json(new RespSchema(200, task, 'not found task in db'));
+		}).catch(error => next(error));
+	} catch (e) {
+		return next(e);
+	}
 };
 
 exports.getUrlInTask = async function(request, response, next){
-    const id = request.params['taskId'].trim();
-    await UrlCompl.find({ task_id: id }).then(urlsCompl => {
-		 response.status(200);
-		 if(urlsCompl.length !== 0) {
-			 urlsCompl.sort(function(first, second) {
-				 return (first.ads_exist === second.ads_exist) ? 0 : first.ads_exist ? -1 : 1;
-			 });
-			 response.json(new RespSchema(200,urlsCompl,null));
-		 }else {
-			 response.json(new RespSchema(200,null,'not found url in Task'));
-		 }
-	 }).catch(error => next(error));
+	try{
+		const id = new ObjectID(request.params['taskId'].trim()); 
+		await UrlCompl.find({ task_id: id }).then(urlsCompl => {
+			response.status(200);
+			if(urlsCompl.length !== 0) {
+				urlsCompl.sort(function(first, second) {
+					return (first.ads_exist === second.ads_exist) ? 0 : first.ads_exist ? -1 : 1;
+				});
+				response.json(new RespSchema(200,urlsCompl,null));
+			}else {
+				response.json(new RespSchema(200,null,'not found url in Task'));
+			}
+		}).catch(error => next(error));
+	}catch (e) {
+		return next(e);
+	}
 };
 
 //Проверка на уже запущенную задачу

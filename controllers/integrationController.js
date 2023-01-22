@@ -4,6 +4,7 @@ const StatusSearch = require('../models/statusSearchNewUrl.js').model;
 const axios = require("axios");
 const convert = require("xml-js");
 const RespSchema = require("../libs/resp/ResponseSchema").schema;
+const { ObjectID } = require('mongodb');
 
 //Сохранение ключей для поиска URL 
 exports.setKeySearch = async function(request, response, next){
@@ -65,17 +66,21 @@ exports.getAllSearchProcess = async function(request, response, next){
 
 //Получение задачи по id
 exports.getSearchProcessId = async function(request, response, next){
-	const id = request.params['processId'].trim();
-	await StatusSearch.findById(id).then(task => {
-		if(task) {
-			UrlNew.find({ status_search_id: id }).then(url=>{
-				response.status(200);
-				response.json(new RespSchema(200,{taskNewUrl: task, url},null));
-			});
-		}
-	}).catch(error => {
-		response.json(new RespSchema(400,null,error.message));
-	});
+	try {
+		const id = new ObjectID(request.params['processId'].trim());
+		await StatusSearch.findById(id).then(task => {
+			if(task) {
+				UrlNew.find({ status_search_id: id }).then(url=>{
+					response.status(200);
+					response.json(new RespSchema(200,{taskNewUrl: task, url},null));
+				});
+			}
+		}).catch(error => {
+			response.json(new RespSchema(400,null,error.message));
+		});
+	} catch (e) {
+		return next(e);
+	}
 };
 
 //Проверка на уже запущенную задачу
