@@ -6,10 +6,11 @@ const express = require("express");
 const config = require("config");
 const path = require("path");
 const logger = require("morgan");
-const cookieParser = require("cookie-parser");
+const session = require('express-session');
 const cors = require('cors')
 const RespSchema = require("./libs/resp/ResponseSchema.js").schema;
 const { connectDb, disconnectDb } = require('./libs/mongoos.js');
+const MongoStore = require('connect-mongo');
 
 // создаем объект приложения
 const app = express();
@@ -22,17 +23,24 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+
+app.use(session({
+	secret: config.get('session.secret'),
+	name: config.get('session.name'),
+	cookie: config.get('session.cookie'),
+	store: MongoStore.create({client: connectDb().getClient()})
+}))
+
 // app.use(express.static(path.join(__dirname, 'build-frontend')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //подкл маршруты
-// const userRouter = require("./routes/userRouter.js");
+const authRouter = require("./routes/authRouter.js");
 const cabinetRouter = require("./routes/cabinetRouter.js");
 const integrationRouter = require("./routes/integrationRouter.js");
 
 //Опр. маршруты
-// app.use("/users", userRouter);
+app.use("/auth", authRouter);
 app.use("/cabinet", cabinetRouter);
 app.use("/integration", integrationRouter);
 
