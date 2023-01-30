@@ -8,7 +8,10 @@ const { ObjectID } = require('mongodb');
 
 
 exports.index = function(request, response){
-    response.render('cabinet');
+    // response.render('cabinet');
+	request.session.countTest = request.session.countTest + 1 || 1;
+	response.status(200);
+	response.json(new RespSchema(200,{res: request.session.countTest},null));
 };
 
 exports.getStats = async function(request, response){

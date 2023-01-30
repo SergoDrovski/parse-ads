@@ -1,3 +1,6 @@
+// подключение ENV
+require('dotenv').config()
+
 const async = require("async");
 const {connectDb, disconnectDb} = require('./libs/mongoos.js');
 const User = require('./models/user.js').model;
@@ -6,19 +9,18 @@ const UrlCompl = require('./models/urlCopleted.js').model;
 const Task = require('./models/task.js').model;
 const Stat = require('./models/stats.js').model;
 
-
-async.series([
-    connectDb,
-    // createUsers,
-    createUrlNew,
-    // createStat,
-    // createUrlCompl,
-    // createTask,
-    disconnectDb,
-]).catch(err => {
-    console.log(err);
-    disconnectDb();
-});
+// async.series([
+//     connectDb,
+//     // createUsers,
+//     createUrlNew,
+//     // createStat,
+//     // createUrlCompl,
+//     // createTask,
+//     disconnectDb,
+// ]).catch(err => {
+//     console.log(err);
+//     disconnectDb();
+// });
 
 
 // function createUsers(callback){
@@ -31,17 +33,17 @@ async.series([
 //     })
 // }
 
-function createUrlNew(callback) {
-	UrlNew.insertMany([
-		{url: 'https://primpress.ru/'},
-		{url: 'https://mirokolonas.xyz/'},
-		{url: 'https://dni.ru/'},
-		{url: 'https://solenka.info/'},
-		{url: 'https://ofigeno.ru/'},
-	]).then(function(err){
-		callback(err)
-	})
-}
+// function createUrlNew(callback) {
+// 	UrlNew.insertMany([
+// 		{url: 'https://primpress.ru/'},
+// 		{url: 'https://mirokolonas.xyz/'},
+// 		{url: 'https://dni.ru/'},
+// 		{url: 'https://solenka.info/'},
+// 		{url: 'https://ofigeno.ru/'},
+// 	]).then(function(err){
+// 		callback(err)
+// 	})
+// }
 
 // function createStat(callback){
 //     const stat = new Stat({
