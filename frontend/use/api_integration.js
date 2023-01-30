@@ -1,13 +1,9 @@
-import { ref } from "@vue/reactivity"
 import { useToast } from 'vue-toastification'
-import useFetch from './fetch.js'
+import customFetch from './fetch.js'
 
 const Toast = useToast()
 
 export default function useIntegration() {
-	const isLoading = ref(false)
-	const errors = ref(null)
-
 	const saveNewKeys = async (string = '') => {
 		if (!string.length) {
 			Toast.error('Заполните форму для ключей!', { closeButton: false })
@@ -18,7 +14,7 @@ export default function useIntegration() {
 			method: 'POST',
 			body: JSON.stringify({ keys: string })
 		}
-		return await useFetch(`/integration/set-key`, params)
+		return await customFetch.useFetch(`/integration/set-key`, params)
 	}
 
 	const deleteKeys = async (ids = []) => {
@@ -26,12 +22,12 @@ export default function useIntegration() {
 			method: 'DELETE',
 			body: JSON.stringify(ids)
 		}
-		return await useFetch(`/integration/delete-key`, params)
+		return await customFetch.useFetch(`/integration/delete-key`, params)
 	}
 
 	const getAllKeys = async () => {
-		return await useFetch(`/integration/get-key`)
+		return await customFetch.useFetch(`/integration/get-key`)
 	}
 
-	return { saveNewKeys, getAllKeys, deleteKeys, isLoading, errors }
+	return { saveNewKeys, getAllKeys, deleteKeys, errors: customFetch.errors, isLoading: customFetch.isLoading  }
 }

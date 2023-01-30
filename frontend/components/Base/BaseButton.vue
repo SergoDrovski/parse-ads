@@ -1,6 +1,11 @@
 <template>
+	<!-- :class="[classes, $attrs.class ? $attrs.class : '']" -->
 	<button
-		:class="[classes, $attrs.class ? $attrs.class : '']"
+		:class="[
+			classes, $attrs.class || '', 
+			{ 'disabled:cursor-not-allowed disabled:hover:border-slate-300 disabled:border-slate-300':!!$attrs.disabled }
+		]"
+		:style="$attrs.style || ''"
 		:type="$attrs.type || 'button'"
 		@click="emit('handlerClick', $event)"
 	>
@@ -19,6 +24,11 @@ const props = defineProps({
 		required: false,
 		default: 'primary',
 		validator: v => ['primary', 'danger', 'success', 'info', 'secondary'].includes(v)
+	},
+	resetClasses: {
+		type: Boolean,
+		required: false,
+		default: false
 	}
 })
 
@@ -62,7 +72,9 @@ const classes = computed(() => {
 		],
 	}
 
-	return [
+	return props.resetClasses 
+	? []
+	: [
 		"align-bottom",
 		"inline-flex",
 		"items-center",

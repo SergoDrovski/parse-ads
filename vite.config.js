@@ -11,6 +11,7 @@ export default defineConfig({
 	build: {
 		outDir: '../build-frontend',
 	},
+	
 	plugins: [vue()],
 	resolve: {
 		alias: { "@": fileURLToPath(new URL("./frontend", import.meta.url)) },

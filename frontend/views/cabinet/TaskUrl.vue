@@ -115,7 +115,7 @@
 import { ref, computed } from '@vue/reactivity';
 import { useRoute } from 'vue-router'
 import useApi from "@/use/api.js";
-import { onErrorCaptured } from 'vue';
+// import { onErrorCaptured } from 'vue';
 
 export default {
 	async setup() {
@@ -126,12 +126,12 @@ export default {
 		const task = ref(null)
 		const taskUrls = ref([])
 
-		onErrorCaptured(() => {
-			return errors
-		})
+		// onErrorCaptured(() => {
+		// 	return errors
+		// })
 
 		task.value = await fetchTaskById(id.value)
-		taskUrls.value = (await fetchTaskUrlById(id.value))?.reverse()
+		taskUrls.value = await fetchTaskUrlById(id.value)
 
 		return { errors, task, taskUrls }
 	}

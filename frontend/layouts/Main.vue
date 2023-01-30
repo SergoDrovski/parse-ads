@@ -9,9 +9,9 @@
 				<div class="container p-6 mx-auto grid max-w-full">
 					<router-view v-slot="{ Component }">
 						<template v-if="Component">
-							<Transition name="fade" mode="out-in">
-								<keep-alive :max="5">
-									<Suspense :timeout="0">
+							<transition name="fade" mode="out-in">
+								<keep-alive :max="5" include="TaskUrl">
+									<suspense :timeout="0">
 										<template #default>
 											<component :is="Component" :key="$route.path"></component>
 										</template>
@@ -23,9 +23,9 @@
 												:key="Component"
 											/>
 										</template>
-									</Suspense>
+									</suspense>
 								</keep-alive>
-							</Transition>
+							</transition>
 						</template>
 					</router-view>
 				</div>
@@ -39,4 +39,16 @@ import TheHeader from '@/components/TheHeader.vue'
 import TheAside from '@/components/TheAside.vue'
 
 import { BreedingRhombusSpinner } from 'epic-spinners'
+import { provide, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const isActiveNav = ref(false)
+const toggleNav = () => isActiveNav.value = !isActiveNav.value
+provide('mobile', { isActiveNav, toggleNav })
+
+const router = useRouter()
+router.beforeEach(() => {
+	isActiveNav.value = false
+	return true
+})
 </script>

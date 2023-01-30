@@ -5,14 +5,33 @@
 			<base-button 
 				v-if="selectedKeys.length"
 				@handlerClick="$emit('handlerDelete', selectedKeys)" 
-				class="!py-1 !px-2 rounded" 
+				class="!py-1 !px-2 !rounded" 
 				color="danger" 
 				title="Удалить"
 			>
 				Удалить выбранные
 			</base-button>
 		</div>
-		<div v-if="computedKeys.length" class="max-h-[90%] mt-2 overflow-auto">
+		<div class="relative">
+			<input
+				v-model="searchQuery"
+				@keyup.esc="searchQuery = ''"
+				type="text" 
+				placeholder="Поиск"
+				class="block w-full px-4 py-2 pr-10 mb-2 rounded border border-slte-300 focus:outline-none focus:border-slate-400 transition-colors"
+			/>
+			<base-button 
+				v-if="searchQuery.length"
+				@handler-click="searchQuery = ''"
+				class="p2 block w-max bg-none border-none absolute top-[10px] right-2" 
+				style="line-height: normal;"
+				reset-classes
+			>
+				<BaseIcon name="x-mark" />
+			</base-button>
+		</div>
+
+		<div v-if="computedKeys.length" class="max-h-[85%] mt-2 overflow-auto">
 			<div 
 				v-for="item in computedKeys" 
 				:key="item._id" 
@@ -37,11 +56,12 @@
 				</div>
 			</div>
 		</div>
+		<div v-else>Нет ключей</div>
 	</div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 defineEmits(['handlerEdit', 'handlerDelete'])
 
@@ -53,6 +73,20 @@ const props = defineProps({
 	}
 })
 
+const searchQuery = ref('')
+
+// сортировку исправить
 const selectedKeys = ref([])
-const computedKeys = computed(() => props.keys.reverse())
+const computedKeys = computed(() => {
+	const sorted = props.keys
+		.sort((a, b) => a.created - b.created)
+
+	return !searchQuery.value.length
+		? sorted 
+		: sorted.filter(item => item.key.indexOf(searchQuery.value) !== -1)
+})
+
+watch(computedKeys, () => {
+	selectedKeys.value = []
+})
 </script>

@@ -41,11 +41,11 @@
 								:title="item.status"
 							>
 								<BaseIcon 
-									v-if="item.status != 'check'"
+									v-if="item.status !== 'check'"
 									:name="item.status === 'failed' ? 'exclamation-circle' : 'check-circle'"
 									class="w-6 h-6 mx-auto"
 								/>
-								<BaseIcon v-else name="bolt" class="w-6 h-6 text-pink-600" />
+								<BaseIcon v-else name="bolt" class="w-6 h-6 mx-auto text-green-600" />
 							</span>
 						</td>
 						<td class="border-b border-slate-100 py-4 text-slate-500 text-center">
@@ -67,13 +67,14 @@
 							{{ new Date(item.created).toLocaleString() }}
 						</td>
 						<td class="border-b border-slate-100 py-4 text-slate-500">
-							{{ new Date(item.completed).toLocaleString() }}
+							<span v-if="item.status == 'check'">...</span>
+							<span v-else>{{ new Date(item.completed).toLocaleString() }}</span>
 						</td>
 						<td class="border-b border-slate-100 py-4 text-slate-500 text-center">
-							<!-- {{
-								((new Date(item.completed).getTime() - new Date(item.created).getTime()) / 1000).toFixed(0)
-							}} сек. -->
-							{{ secondsToHms(((new Date(item.completed).getTime() - new Date(item.created).getTime()) / 1000).toFixed(0)) }}
+							<span v-if="item.status == 'check'">...</span>
+							<span v-else>
+								{{ secondsToHms(((new Date(item.completed).getTime() - new Date(item.created).getTime()) / 1000).toFixed(0)) }}
+							</span>
 						</td>
 					</tr>
 				</router-link>

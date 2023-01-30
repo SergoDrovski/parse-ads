@@ -10,6 +10,7 @@ import './assets/styles/main.scss'
 import components from '@/components/Base'
 
 const app = createApp(App)
+
 app.use(router)
 
 // подключаем базовые UI компоненты

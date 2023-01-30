@@ -22,7 +22,9 @@ const routes = [{
 				path: '/cabinet/stats',
 				name: 'cabinet:stats',
 				component: CabinetStats,
-				title: 'Статистика'
+				meta: {
+					title: 'Статистика'
+				}
 			},
 			// { 
 			// 	path: '/cabinet/task/:id',
@@ -34,13 +36,17 @@ const routes = [{
 				path: '/cabinet/task/:id/url', 
 				name: 'cabinet:task:url',
 				component: CabinetTaskUrl,
-				title: 'Ссылки в задаче'
+				meta: {
+					title: 'Ссылки в задаче'
+				}
 			},
 			{ 
 				path: '/cabinet/integration', 
 				name: 'cabinet:integration',
 				component: CabinetIntegration,
-				title: 'Интеграция'
+				meta: {
+					title: 'Интеграция'
+				}
 			},
 		]
 	},

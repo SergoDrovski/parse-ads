@@ -14,16 +14,8 @@
 			<base-button
 				type="submit"
 				:disabled="isLoading"
-				:class="[
-					'flex',
-					'items-center',
-					'gap-2',
-					'px-2',
-					'py-1',
-					{
-						'!bg-slate-200 !border-slate-200 !text-black': isLoading,
-					},
-				]"
+				:color="isLoading ? 'secondary' : 'info' "
+				class="!flex !gap-2 h-[43px]"
 			>
 				<BaseIcon
 					v-show="isLoading"
@@ -46,6 +38,7 @@ const emit = defineEmits(['updateAllKeys'])
 
 const Toast = useToast()
 const { saveNewKeys, isLoading } = useIntegration()
+
 const keys = ref('')
 
 const handlerNewKeys = async () => {

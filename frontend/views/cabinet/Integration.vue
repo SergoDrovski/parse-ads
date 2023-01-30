@@ -1,5 +1,5 @@
 <template>
-	<div class="grid grid-cols-2 gap-6">
+	<div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
 
 		<!-- add keys -->
 		<IntegrationAddKeys @update-all-keys="updateList" />
@@ -36,6 +36,11 @@ const handlerDelete = async (ids = []) => {
 		const { deletedCount } = await deleteKeys(ids)
 		allKeys.value = await getAllKeys()
 		Toast.success(`Ключи успешно удалены (${deletedCount})`)
+	}
+
+	// kek
+	else {
+		confirm('Отменить отмену?')
 	}
 }
 
