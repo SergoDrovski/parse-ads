@@ -23,8 +23,7 @@ exports.loginUser = async function(request, response, next){
 
 exports.logoutUser = async function(request, response, next){
 	request.session.destroy();
-	response.status(404);
-	response.redirect('/')
+	response.json(new RespSchema(300, { logout: true }, null))
 }
 
 class ValidDataForm {

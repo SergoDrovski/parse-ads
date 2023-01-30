@@ -18,8 +18,8 @@ app.set('port', config.get('port'));
 app.use(cors());
 
 //view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -31,8 +31,8 @@ app.use(session({
 	store: MongoStore.create({client: connectDb().getClient()})
 }))
 
-// app.use(express.static(path.join(__dirname, 'build-frontend')));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'build-frontend')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 //подкл маршруты
 const authRouter = require("./routes/authRouter.js");
